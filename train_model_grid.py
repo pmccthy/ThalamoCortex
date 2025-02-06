@@ -19,11 +19,21 @@ import pickle
 from models import CTCNet
 from utils import make_grid, create_data_loaders, train, evaluate
 
-
 # Create a logger
 logger = logging.getLogger("MyLogger")
 logger.setLevel(logging.DEBUG)  # Set logging level
 
+# Custom class to redirect stdout to logger
+class LoggerWriter:
+    def __init__(self, level):
+        self.level = level  # Logging level (INFO, ERROR, etc.)
+
+    def write(self, message):
+        if message.strip():  # Avoid logging empty lines
+            self.level(message.strip())
+
+    def flush(self):
+        pass  # Needed for compatibility with sys.stdout
 
 # Save paths
 data_save_path = "/Users/patmccarthy/Documents/thalamocortex/data"
@@ -85,6 +95,10 @@ if __name__ == "__main__":
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
 
+    # Redirect stdout and stderr to logger
+    sys.stdout = LoggerWriter(logger.info)
+    sys.stderr = LoggerWriter(logger.error)
+
     # Make parameter grid
     model_param_grid = make_grid(hyperparam_grid)
 
@@ -101,6 +115,8 @@ if __name__ == "__main__":
     num_comb = len(model_param_grid)
     for hp_comb_idx, hyperparams in enumerate(model_param_grid):
         logger.info(f"Hyperparameter combination {hp_comb_idx+1} of {num_comb}")
+
+        # TODO: select trainer function based on whether dynamic learning rates chosen
 
         # create readable tag for saving
         tag = "CTCNet"

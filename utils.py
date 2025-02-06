@@ -174,37 +174,95 @@ def evaluate(model, data_loader, optimizer, loss_fn, ohe_targets, num_classes, d
 
     return losses
 
-def train_dynamic_learning_rate(data_loader, model, loss_fn, optimizer, class_subgroups={"group1": [1,2,3,4],
-                                                                                         "group2": [5,6,7,8]}):
-    """
-    Train model for one epoch.
-    TODO: refactor this as modified version of train function 
-    """
+groups={"group1": [1,2,3,4],
+        "group2": [5,6,7,8]}
 
+
+def train_dynamic_lr(model,
+          trainset_loader,
+          valset_loader,
+          optimizer,
+          loss_fn,
+          ohe_targets,
+          num_classes,
+          num_epochs,
+          device,
+          loss_track_step,
+          groups,
+          learning_rates):
+    """Train model and regularly evaluate on validation set."""
+    start_time = time.time()
+
+    print("Training...")
+    train_losses_epochs = []
+    val_losses_epochs = []
+    for epoch in range(num_epochs):
+        print(f"Beginning epoch {epoch+1}/{num_epochs}")
+        train_losses = train_one_epoch_dynamic_lr(
+           model,
+           trainset_loader,
+           optimizer,
+           loss_fn,
+           ohe_targets,
+           num_classes,
+           device,
+           loss_track_step,
+           groups,
+           learning_rates
+        )
+        val_losses = evaluate(
+           model,
+           valset_loader,
+           optimizer,
+           loss_fn,
+           ohe_targets,
+           num_classes,
+           device,
+           loss_track_step
+        )
+        train_losses_epochs.append(train_losses)
+        val_losses_epochs.append(val_losses)
+        print(f"Epoch {epoch+1}/{num_epochs} done")
+    train_time = time.time() - start_time
+    print(f"Finished training in {train_time:.2f} seconds.")
+
+    return train_losses_epochs, val_losses_epochs, train_time 
+
+
+def train_one_epoch_dynamic_lr(model, data_loader, optimizer, loss_fn, ohe_targets, num_classes, device, loss_track_step, groups, learning_rates):
+    """Train model for one epoch."""
     size = len(data_loader.dataset)
     model.train()
     losses = []
-    for batch, (X, Y) in enumerate(data_loader):
-        # move data to device where model will be trained
+    for batch, (X, y) in enumerate(data_loader):
+        # move data to device where model is being trained
         X = X.to(device)
+        y = y.to(device)
+        
+        # one-hot encode targets if specified
+        if ohe_targets:
+            y_one_hot = torch.nn.functional.one_hot(y, num_classes=num_classes).float()
+        
+        # autograd fwd pass
+        y_est = model(X)
 
-        # compute error
-        Y, X_recon = model(X)
-        loss = loss_fn(X_recon, X)
+        # compute loss
+        loss = loss_fn(y_est, y_one_hot)
 
         # set learning rate based on class ID
-        for group_name, group_vals in class_subgroups.items():
-            if Y in group_vals:
+        group = "none"
+        for group_name, group_vals in groups.items():
+            if y in group_vals:
                 group = group_name
-        optimizer = torch.optim.Adam(model.parameters(), lr=HP["LEARNING_RATE"][group_name])
+        optimizer = torch.optim.Adam(model.parameters(), lr=learning_rates[group])
 
-        # backprop
+        # autograd bwd pass
         loss.backward()  # compute gradients
         optimizer.step()  # update params
-        optimizer.zero_grad()  # ensure not tracking gradients fo next iteration
+        optimizer.zero_grad()  # ensure not tracking gradients for next iteration
 
-        # print loss every 500th batch
-        if batch % HP["LOSS_TRACK_STEP"] == 0:
+        # print loss every Nth batch
+        if batch % loss_track_step == 0:
             loss, current = loss.item(), (batch + 1) * len(X)
             print(
                 f"training batch {batch+1}, loss: {loss:.3f}, {current}/{size} datapoints"
