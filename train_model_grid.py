@@ -2,32 +2,37 @@
 Train a single CTCNet model on FashionMNIST.
 """
 
-import pickle
 import os
+import sys
+import logging
+import argparse
 import traceback
+from datetime import date
 from copy import deepcopy
 from pathlib import Path
+
+import numpy as np
 import torch
+import pickle
+
 from models import CTCNet
 from utils import make_grid, create_data_loaders, train, evaluate
 
-# Set backend
-print("Setting backend.")
-device = (
-    "cuda"
-    if torch.cuda.is_available()
-    else "mps" if torch.backends.mps.is_available() else "cpu"
-)
-print(f"Using {device} device.")
 
+# Create a logger
+logger = logging.getLogger("MyLogger")
+logger.setLevel(logging.DEBUG)  # Set logging level
+
+
+# Save paths
 data_save_path = "/Users/patmccarthy/Documents/thalamocortex/data"
 results_save_path = "/Users/patmccarthy/Documents/thalamocortex/results"
 
 hyperparam_grid = {
     # data hyperparams
-    "norm" : "normalise",
-    "dataset" : "FashionMNIST",
-    "save_path" : "/Users/patmccarthy/Documents/thalamocortex/data",
+    "norm" : ["normalise"],
+    "dataset" : ["MNIST"],
+    "save_path" : ["/Users/patmccarthy/Documents/thalamocortex/data"],
     "batch_size" : [32],
     # model hyperparams
     "input_size" : [28 * 28],
@@ -41,33 +46,91 @@ hyperparam_grid = {
     # training hyperparams
     "lr" : [0.001],
     "loss" : [torch.nn.CrossEntropyLoss()],
-    "epochs": [1],
+    "epochs": [10],
     "ohe_targets": [True],
-    "track_loss_step": 50
+    "track_loss_step": [50]
 }
 
 if __name__ == "__main__":
     
-    # make parameter grid
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(
+        prog="CTCNet model grid training script.",
+        description="Trains grid of CTCNet models on MNIST with specified hyperparams.",
+    )
+    parser.add_argument("-n", "--name")  # option that takes a value
+    args = parser.parse_args()
+
+    # Set save directory (and make if does not exist)
+    save_path_this_run = Path(results_save_path, f"{args.name}")
+    if not os.path.exists(save_path_this_run):
+        os.mkdir(save_path_this_run)
+
+    # Log file handler
+    log_file_path = Path(save_path_this_run, "training.log")
+    file_handler = logging.FileHandler(log_file_path)
+    file_handler.setLevel(logging.DEBUG)
+
+    # Console file handler
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setLevel(logging.DEBUG)
+
+    # Create a logging formatter and set it for both handlers
+    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+    file_handler.setFormatter(formatter)
+    console_handler.setFormatter(formatter)
+
+    # Add handlers to the logger
+    logger.addHandler(file_handler)
+    logger.addHandler(console_handler)
+
+    # Make parameter grid
     model_param_grid = make_grid(hyperparam_grid)
 
+    # Set backend
+    logger.info("Setting backend.")
+    device = (
+        "cuda"
+        if torch.cuda.is_available()
+        else "mps" if torch.backends.mps.is_available() else "cpu"
+    )
+    logger.info(f"Using {device} device.")
+
+    # number of parameter combinations
     num_comb = len(model_param_grid)
+    for hp_comb_idx, hyperparams in enumerate(model_param_grid):
+        logger.info(f"Hyperparameter combination {hp_comb_idx+1} of {num_comb}")
 
-    for hp_comb_idx, hyperparams in model_param_grid:
-        print(f"Hyperparameter combination {hp_comb_idx+1} of {num_comb}")
-
+        # create readable tag for saving
+        tag = "CTCNet"
+        if hyperparams["thalamocortical_type"] is None:
+            tag += "_TC_none"
+        else:
+            tag += f"_TC_{hyperparams['thalamocortical_type']}"
+        if hyperparams["thal_reciprocal"]:
+            tag += "_reciprocal"
+        if hyperparams["thal_to_readout"]:
+            tag += "_readout"
+        if hyperparams["thal_per_layer"]:
+            tag += "_per_layer"
+        
+        # create path for saving this model
+        save_path_this_model = Path(save_path_this_run, tag)
+        if not os.path.exists(save_path_this_model):
+            os.mkdir(save_path_this_model)
+                
         try:
 
             # create data loaders
-            print("Loading data...")
+            logger.info("Loading data...")
             trainset_loader, testset_loader, metadata = create_data_loaders(dataset=hyperparams["dataset"],
-                                                                                    norm=hyperparams["norm"],
-                                                                                    save_path=hyperparams["save_path"],
-                                                                                    batch_size=hyperparams["batch_size"])
-            print("Done loading.")
+                                                                            norm=hyperparams["norm"],
+                                                                            save_path=hyperparams["save_path"],
+                                                                            batch_size=hyperparams["batch_size"])
+            logger.info("Done loading.")
 
             # create model
-            print("Building model and optimiser...")
+            logger.info("Building model and optimiser...")
             model = CTCNet(input_size=hyperparams["input_size"],
                             output_size=hyperparams["output_size"],
                             ctx_layer_size=hyperparams["ctx_layer_size"],
@@ -82,7 +145,7 @@ if __name__ == "__main__":
             loss_fn = deepcopy(hyperparams["loss"])
             optimizer = torch.optim.Adam(model.parameters(),
                                         lr = hyperparams["lr"])
-            print("Done.")
+            logger.info("Done.")
 
             # train model
             train_losses, val_losses, train_time = train(model=model,
@@ -97,7 +160,7 @@ if __name__ == "__main__":
                                             loss_track_step=hyperparams["track_loss_step"])
             
             # evaluate model
-            print("Evaluating model...")
+            logger.info("Evaluating model...")
             losses = evaluate(model=model,
                             data_loader=testset_loader,
                             optimizer=optimizer,
@@ -106,13 +169,14 @@ if __name__ == "__main__":
                             num_classes=len(metadata["classes"]),
                             device=device,
                             loss_track_step=hyperparams["track_loss_step"])
-            print("Done evaluating.")
+            logger.info("Done evaluating.")
+
+            # take average of final validation loss
+            final_val_loss_avg = np.mean(losses)
+            logger.info(f"Average final validation loss: {final_val_loss_avg:.3f}")
 
             # Save model
-            save_path_this_model = Path(results_save_path, "model0_05_01_24")
-            if not os.path.exists(save_path_this_model):
-                os.mkdir(save_path_this_model)
-            print("Saving...")
+            logger.info("Saving...")
             # model
             torch.save(model.state_dict(), Path(f"{save_path_this_model}", "model.pth"))
             # hyperparams
@@ -125,9 +189,9 @@ if __name__ == "__main__":
                             "train_time": train_time}
             with open(Path(f"{save_path_this_model}", "learning.pkl"), "wb") as handle:
                 pickle.dump(training_stats, handle)
-            print("Done saving.")
+            logger.info("Done saving.")
 
-            print(f"Successfully completed hyperparameter combination {hp_comb_idx+1} of {num_comb}")
+            logger.info(f"Successfully completed hyperparameter combination {hp_comb_idx+1} of {num_comb}")
         
         except Exception as e:
-            print(f"Failed hyperparameter combination {hp_comb_idx+1} of {num_comb} with exception: {e}")
+            logger.info(f"Failed hyperparameter combination {hp_comb_idx+1} of {num_comb} with exception: {e}")
