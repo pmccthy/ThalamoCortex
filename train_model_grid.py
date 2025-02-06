@@ -1,5 +1,6 @@
 """
-Train a single CTCNet model on FashionMNIST.
+Train a grid of CTCNet models.
+Author: patrick.mccarthy@dtc.ox.ac.uk
 """
 
 import os

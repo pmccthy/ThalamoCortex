@@ -1,5 +1,5 @@
 """
-Train a single CTCNet model on MNIST.
+Train a single CTCNet model.
 Author: patrick.mccarthy@dtc.ox.ac.uk
 """
 
