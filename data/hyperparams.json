@@ -1,1 +1,0 @@
-{"norm": "normalise", "dataset": "FashionMNIST", "save_path": "/Users/patmccarthy/Documents/thalamocortex/data", "batch_size": 32, "input_size": 784, "output_size": 10, "ctx_layer_size": 128, "thal_layer_size": 64, "thalamocortical_type": null, "thal_reciprocal": true, "thal_to_readout": true, "thal_per_layer": false, "lr": 0.001, "loss": 
