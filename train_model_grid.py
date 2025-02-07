@@ -9,7 +9,7 @@ import logging
 import argparse
 import traceback
 from datetime import date
-from copy import deepcopy
+from copy import copy, deepcopy
 from pathlib import Path
 
 import numpy as np
@@ -50,7 +50,7 @@ hyperparam_grid = {
     "output_size" : [10],
     "ctx_layer_size" : [128],
     "thal_layer_size" : [64],
-    "thalamocortical_type" : [None, "additive", "multi_pre_activation", "multi_post_activation"], # None, multiplicative, or additive
+    "thalamocortical_type" : [None, "add", "multi_pre_activation", "multi_post_activation"], # None, multiplicative, or additive
     "thal_reciprocal" : [True, False], # True or False
     "thal_to_readout" : [True, False], # True or False
     "thal_per_layer" : [True, False], # if no, mixing from cortical layers
@@ -114,12 +114,16 @@ if __name__ == "__main__":
     # number of parameter combinations
     num_comb = len(model_param_grid)
     for hp_comb_idx, hyperparams in enumerate(model_param_grid):
-        logger.info(f"Hyperparameter combination {hp_comb_idx+1} of {num_comb}")
+        logger.info(f"Running hyperparameter combination {hp_comb_idx+1} of {num_comb}")
 
         # TODO: select trainer function based on whether dynamic learning rates chosen
 
         # create readable tag for saving
-        tag = "CTCNet"
+        if hp_comb_idx < 10:
+            comb_id = f"0{hp_comb_idx}"
+        else:
+            comb_id = copy(hp_comb_idx)
+        tag = f"{hp_comb_idx}_CTCNet"
         if hyperparams["thalamocortical_type"] is None:
             tag += "_TC_none"
         else:
@@ -131,6 +135,9 @@ if __name__ == "__main__":
         if hyperparams["thal_per_layer"]:
             tag += "_per_layer"
         
+        # print model tag
+        logger.info(f"{tag}")
+
         # create path for saving this model
         save_path_this_model = Path(save_path_this_run, tag)
         if not os.path.exists(save_path_this_model):

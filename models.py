@@ -63,7 +63,7 @@ class CTCNet(nn.Module):
             if self.thal_reciprocal:
                 if self.thalamocortical_type == "multi_post_activation":
                     self.thal_to_ctx1_projections = nn.Linear(self.thal_layer_size, self.ctx_layer_size)
-                    self.thal_to_ctx2 = nn.Linear(self.thal_layer_size, self.ctx_layer_size)
+                    self.thal_to_ctx2_projections = nn.Linear(self.thal_layer_size, self.ctx_layer_size)
                 else:
                     self.thal_to_ctx1_projections = nn.Linear(self.thal_layer_size, self.input_size)
                     self.thal_to_ctx2_projections = nn.Linear(self.thal_layer_size, self.ctx_layer_size)
@@ -73,18 +73,18 @@ class CTCNet(nn.Module):
                 if not self.thal_per_layer:
 
                     if self.thalamocortical_type == "multi_post_activation":
-                        self.thal_to_readout_projections = nn.Linear(self.thal_layer_size, self.input_size)
+                        self.thal_to_readout_projections = nn.Linear(self.thal_layer_size, self.output_size)
                     else:
                         self.thal_to_readout_projections = nn.Linear(self.thal_layer_size, self.ctx_layer_size)
 
                 else:
 
                     if self.thalamocortical_type == "multi_post_activation":
+                        self.thal1_to_readout_projections = nn.Linear(self.thal_layer_size, self.output_size)
+                        self.thal2_to_readout_projections = nn.Linear(self.thal_layer_size, self.output_size)
+                    else:
                         self.thal1_to_readout_projections = nn.Linear(self.thal_layer_size, self.ctx_layer_size)
                         self.thal2_to_readout_projections = nn.Linear(self.thal_layer_size, self.ctx_layer_size)
-                    else:
-                        self.thal1_to_readout_projections = nn.Linear(self.thal_layer_size, self.input_size)
-                        self.thal2_to_readout_projections = nn.Linear(self.thal_layer_size, self.input_size)
 
         # feedforward cortical 1
         self.ctx1 = nn.Sequential(
@@ -145,6 +145,11 @@ class CTCNet(nn.Module):
                         ctx1 = self.ctx1(input_ctx1)
                         input_ctx2 = ctx1 * thal_to_ctx2 
                         ctx2 = self.ctx2(input_ctx2)
+                    elif self.thalamocortical_type == "multi_post_activation":
+                        input_ctx1 = input
+                        ctx1 = self.ctx1(input_ctx1) * thal_to_ctx1
+                        input_ctx2 = ctx1
+                        ctx2 = self.ctx2(input_ctx2) * thal_to_ctx2
                 else: # handles case for when readout feedback only
                     ctx1 = self.ctx1(input)
                     ctx2 = self.ctx2(ctx1)
