@@ -270,3 +270,57 @@ def train_one_epoch_dynamic_lr(model, data_loader, optimizer, loss_fn, ohe_targe
             losses.append(loss)
 
     return losses
+
+class ModulatedOptimiser(torch.optim.SGD):
+    """
+    Custom optimiser with learning rates modulated by input, enabling plasticity gating to be modelled.
+    """
+    def __init__(self, params, lr=0.01):
+        super().__init__(params, lr=lr)
+
+    def step(self, mod_factors, closure=None):
+
+        # scale gradients by modulation factors one-by-one
+        for group in self.param_groups:
+            for j, param in enumerate(group['params']):
+                if param.grad is not None:
+                    param.grad *= mod_factors[j] 
+        
+        # Perform regular optimizer step
+        super().step(closure)
+
+
+def train_one_epoch_plastic_mod(model, data_loader, optimizer, loss_fn, ohe_targets, num_classes, device, loss_track_step):
+    """Train model for one epoch with plasticity gating."""
+    size = len(data_loader.dataset)
+    model.train()
+    losses = []
+    for batch, (X, y) in enumerate(data_loader):
+        # move data to device where model is being trained
+        X = X.to(device)
+        y = y.to(device)
+        
+        # one-hot encode targets if specified
+        if ohe_targets:
+            y_one_hot = torch.nn.functional.one_hot(y, num_classes=num_classes).float()
+        
+        # autograd fwd pass
+        y_est, thal = model(X)
+
+        # compute loss
+        loss = loss_fn(y_est, y_one_hot)
+
+        # autograd bwd pass
+        loss.backward()  # compute gradients
+        optimizer.step()  # update params
+        optimizer.zero_grad()  # ensure not tracking gradients for next iteration
+
+        # print loss every Nth batch
+        if batch % loss_track_step == 0:
+            loss, current = loss.item(), (batch + 1) * len(X)
+            print(
+                f"training batch {batch+1}, loss: {loss:.3f}, {current}/{size} datapoints"
+            )
+            losses.append(loss)
+
+    return losses

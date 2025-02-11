@@ -111,9 +111,9 @@ class CTCNet(nn.Module):
 
         # Cortical layers
         # special case for multiplicative pre-activation attention        
-        if (self.thalamocortical_type == "multi_pre_activation") and self.thal_to_reciprocal:
-            self.ctx1 = CortexWithThalamicMultiPreAct(self.input_size, output_size)
-            self.ctx2 = CortexWithThalamicMultiPreAct(self.input_size, output_size)
+        if (self.thalamocortical_type == "multi_pre_activation") and self.thal_reciprocal:
+            self.ctx1 = CortexWithThalamicMultiPreAct(self.input_size, self.ctx_layer_size)
+            self.ctx2 = CortexWithThalamicMultiPreAct(self.ctx_layer_size, self.ctx_layer_size)
         else:
             self.ctx1 = nn.Sequential(
             nn.Linear(self.input_size, self.ctx_layer_size),
@@ -232,7 +232,6 @@ class CTCNet(nn.Module):
                # handle case for when reciprocal feedback but no readout feedback 
                 else: 
                     output = self.readout(ctx2)
-
             
             # compute thalamic activity for next timestep
             if self.thal_per_layer:
@@ -256,3 +255,17 @@ class CTCNet(nn.Module):
         
     def summary(self):
         summary(self)
+
+class CTCNetPlasticityMod(nn.Module):
+    """
+    Class for models which use thalamic layers for plasticity modulation.
+    In these models, thalamic activity will be computed, but there will be no
+    explicit thalamocortical projections. Instead, these will be fed into the 
+    
+    NOTE: forward function must output thalamic states
+    """
+    
+    def forward():
+        y_est = 0
+        thal = 0
+        return y_est, thal
