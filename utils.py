@@ -15,16 +15,35 @@ def make_grid(param_dict):
 
 def create_data_loaders(dataset, norm, batch_size, save_path, train_test_split=0.8):
 
+    if dataset == "CIFAR10":
+        transform = transforms.Compose([
+            transforms.Grayscale(num_output_channels=1),
+            transforms.ToTensor()  
+        ])
+
     # choose normalisation method
     if norm == "normalise":
-        transform = transforms.Compose([
-            transforms.ToTensor(), # scale values to lie in range [0, 1]
-        ])
+        if dataset == "CIFAR10":
+            transform = transforms.Compose([
+                transforms.Grayscale(num_output_channels=1), # convert to greyscale if CIFAR10 chosen
+                transforms.ToTensor(), # scale values to lie in range [0, 1]
+            ])
+        else:
+            transform = transforms.Compose([
+                transforms.ToTensor(), # scale values to lie in range [0, 1]
+            ])
     elif norm == "standardise":
-                transform = transforms.Compose([
-            transforms.ToTensor(), 
-            transforms.Normalize((0.), (1.,))  # standarise values to have zero mean and unit SD
-        ])
+        if dataset == "CIFAR10":
+            transform = transforms.Compose([
+                transforms.Grayscale(num_output_channels=1), # convert to greyscale if CIFAR10 chosen
+                transforms.ToTensor(), 
+                transforms.Normalize((0.), (1.,))  # standarise values to have zero mean and unit SD
+            ])
+        else:
+            transform = transforms.Compose([
+                transforms.ToTensor(), 
+                transforms.Normalize((0.), (1.,))  # standarise values to have zero mean and unit SD
+            ])    
                 
     # load dataset and apply normalisation
     metadata = {}
