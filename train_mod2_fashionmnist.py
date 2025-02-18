@@ -56,9 +56,9 @@ hyperparam_grid = {
     "thal_to_readout" : [False], 
     "thal_per_layer" : [False],
     # training hyperparams
-    "lr" : [5e-4, 5e-6],
+    "lr" : [5e-6],
     "loss" : [torch.nn.CrossEntropyLoss()],
-    "epochs": [200],
+    "epochs": [400],
     "ohe_targets": [True],
     "track_loss_step": [50]
 }
@@ -173,7 +173,7 @@ if __name__ == "__main__":
             logger.info("Done.")
 
             # train model
-            train_losses, val_losses, train_time = train(model=model,
+            train_losses, val_losses, state_dicts, train_time = train(model=model,
                                             trainset_loader=trainset_loader,
                                             valset_loader=testset_loader,
                                             optimizer=optimizer,
@@ -211,6 +211,7 @@ if __name__ == "__main__":
             training_stats = {"train_losses": train_losses,
                             "val_losses": val_losses,
                             "final_val_losses": losses,
+                            "state_dicts": state_dicts,
                             "train_time": train_time}
             with open(Path(f"{save_path_this_model}", "learning.pkl"), "wb") as handle:
                 pickle.dump(training_stats, handle)

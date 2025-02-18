@@ -1,5 +1,5 @@
 """
-Train a grid of CTCNet models with "driver-type" thalamocortical projections.
+Train a grid of CTCNet models with "modulator-type" thalamocortical projections of the second kind.
 Author: patrick.mccarthy@dtc.ox.ac.uk
 """
 
@@ -43,7 +43,7 @@ results_save_path = "/Users/patmccarthy/Documents/thalamocortex/results"
 hyperparam_grid = {
     # data hyperparams
     "norm" : ["normalise"],
-    "dataset" : ["FashionMNIST"],
+    "dataset" : ["CIFAR10"],
     "save_path" : ["/Users/patmccarthy/Documents/thalamocortex/data"],
     "batch_size" : [32],
     # model hyperparams
@@ -51,9 +51,9 @@ hyperparam_grid = {
     "output_size" : [10],
     "ctx_layer_size" : [128],
     "thal_layer_size" : [64],
-    "thalamocortical_type" : ["add"],
+    "thalamocortical_type" : ["multi_post_activation"],
     "thal_reciprocal" : [True], 
-    "thal_to_readout" : [True], 
+    "thal_to_readout" : [False], 
     "thal_per_layer" : [False],
     # training hyperparams
     "lr" : [5e-6],

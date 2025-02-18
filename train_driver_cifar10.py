@@ -43,7 +43,7 @@ results_save_path = "/Users/patmccarthy/Documents/thalamocortex/results"
 hyperparam_grid = {
     # data hyperparams
     "norm" : ["normalise"],
-    "dataset" : ["FashionMNIST"],
+    "dataset" : ["CIFAR10"],
     "save_path" : ["/Users/patmccarthy/Documents/thalamocortex/data"],
     "batch_size" : [32],
     # model hyperparams
@@ -173,7 +173,7 @@ if __name__ == "__main__":
             logger.info("Done.")
 
             # train model
-            train_losses, val_losses, state_dicts, train_time = train(model=model,
+            train_losses, val_losses, state_dicts,  train_time = train(model=model,
                                             trainset_loader=trainset_loader,
                                             valset_loader=testset_loader,
                                             optimizer=optimizer,

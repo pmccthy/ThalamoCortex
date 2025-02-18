@@ -131,7 +131,7 @@ class CTCNet(nn.Module):
 
     def forward(self, input):
         
-        # flatten input
+        # flatten input (row-major)
         input = input.view(input.size(0), -1) # reshape input to flatten and remove second dimension (using view rather than assigning more memory)
 
         # one iteration of forward subroutine to get thalamic activity

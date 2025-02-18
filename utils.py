@@ -13,7 +13,7 @@ def make_grid(param_dict):
     ds=[dict(zip(param_names, param_val)) for param_val in combinations] # convert to list of dicts
     return ds
 
-def create_data_loaders(dataset, norm, batch_size, save_path):
+def create_data_loaders(dataset, norm, batch_size, save_path, train_test_split=0.8):
 
     # choose normalisation method
     if norm == "normalise":
@@ -28,27 +28,34 @@ def create_data_loaders(dataset, norm, batch_size, save_path):
                 
     # load dataset and apply normalisation
     metadata = {}
-    if dataset == "MNIST":
-        trainset = datasets.MNIST(root=save_path,
-                                  train=True,
-                                  download=True,
-                                  transform=transform)
-        testset = datasets.MNIST(root=save_path,
-                                  train=False,
-                                  download=True,
-                                  transform=transform)
+    try:
+        trainset = getattr(datasets, dataset)(root=save_path, train=True, download=True, transform=transform)
+        testset = getattr(datasets, dataset)(root=save_path, train=False, download=True, transform=transform)
         metadata["classes"] = trainset.classes
-    elif dataset == "FashionMNIST":
-        trainset = datasets.FashionMNIST(root=save_path,
-                                         train=True,
-                                         download=True,
-                                         transform=transform)
-        testset = datasets.FashionMNIST(root=save_path,
-                                        train=False,
-                                        download=True,
-                                        transform=transform)
+    except Exception as e:
+        print(f"Retrieving dataset failed with exception: {e}")
+
+    # if dataset == "MNIST":
+    #     trainset = datasets.MNIST(root=save_path,
+    #                               train=True,
+    #                               download=True,
+    #                               transform=transform)
+    #     testset = datasets.MNIST(root=save_path,
+    #                               train=False,
+    #                               download=True,
+    #                               transform=transform)
+    #     metadata["classes"] = trainset.classes
+    # elif dataset == "FashionMNIST":
+    #     trainset = datasets.FashionMNIST(root=save_path,
+    #                                      train=True,
+    #                                      download=True,
+    #                                      transform=transform)
+    #     testset = datasets.FashionMNIST(root=save_path,
+    #                                     train=False,
+    #                                     download=True,
+    #                                     transform=transform)
         
-        metadata["classes"] = trainset.classes
+    #     metadata["classes"] = trainset.classes
 
     # create loaders
     trainset_loader = torch.utils.data.DataLoader(dataset = trainset,
@@ -76,9 +83,10 @@ def train(model,
     print("Training...")
     train_losses_epochs = []
     val_losses_epochs = []
+    state_dicts = []
     for epoch in range(num_epochs):
         print(f"Beginning epoch {epoch+1}/{num_epochs}")
-        train_losses = train_one_epoch(
+        train_losses, state_dict = train_one_epoch(
            model,
            trainset_loader,
            optimizer,
@@ -86,7 +94,8 @@ def train(model,
            ohe_targets,
            num_classes,
            device,
-           loss_track_step
+           loss_track_step,
+           get_state_dict=True,
         )
         val_losses = evaluate(
            model,
@@ -96,18 +105,19 @@ def train(model,
            ohe_targets,
            num_classes,
            device,
-           loss_track_step
+           loss_track_step,
         )
         train_losses_epochs.append(train_losses)
         val_losses_epochs.append(val_losses)
+        state_dicts.append(state_dict)
         print(f"Epoch {epoch+1}/{num_epochs} done")
     train_time = time.time() - start_time
     print(f"Finished training in {train_time:.2f} seconds.")
 
-    return train_losses_epochs, val_losses_epochs, train_time 
+    return train_losses_epochs, val_losses_epochs, state_dicts, train_time 
 
 
-def train_one_epoch(model, data_loader, optimizer, loss_fn, ohe_targets, num_classes, device, loss_track_step):
+def train_one_epoch(model, data_loader, optimizer, loss_fn, ohe_targets, num_classes, device, loss_track_step, get_state_dict=False):
     """Train model for one epoch."""
     size = len(data_loader.dataset)
     model.train()
@@ -132,15 +142,22 @@ def train_one_epoch(model, data_loader, optimizer, loss_fn, ohe_targets, num_cla
         optimizer.step()  # update params
         optimizer.zero_grad()  # ensure not tracking gradients for next iteration
 
+        # get loss
+        loss, current = loss.item(), (batch + 1) * len(X)
+        losses.append(loss)
+
         # print loss every Nth batch
         if batch % loss_track_step == 0:
-            loss, current = loss.item(), (batch + 1) * len(X)
             print(
                 f"training batch {batch+1}, loss: {loss:.3f}, {current}/{size} datapoints"
             )
-            losses.append(loss)
 
-    return losses
+    if get_state_dict:
+        state_dict = model.state_dict()
+    else:
+        state_dict = None # return null value so number of return arguments always the same
+
+    return losses, state_dict
 
 def evaluate(model, data_loader, optimizer, loss_fn, ohe_targets, num_classes, device, loss_track_step):
     """Validate model for one epoch."""
@@ -312,7 +329,7 @@ def train_one_epoch_plastic_mod(model, data_loader, optimizer, loss_fn, ohe_targ
 
         # autograd bwd pass
         loss.backward()  # compute gradients
-        optimizer.step()  # update params
+        optimizer.step(mod_factors=thal)  # update params
         optimizer.zero_grad()  # ensure not tracking gradients for next iteration
 
         # print loss every Nth batch
