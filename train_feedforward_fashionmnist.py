@@ -51,9 +51,9 @@ hyperparam_grid = {
     "output_size" : [10],
     "ctx_layer_size" : [256],
     "thal_layer_size" : [64],
-    "thalamocortical_type" : ["add"],
-    "thal_reciprocal" : [True], 
-    "thal_to_readout" : [True], 
+    "thalamocortical_type" : [None],
+    "thal_reciprocal" : [False], 
+    "thal_to_readout" : [False], 
     "thal_per_layer" : [False],
     # training hyperparams
     "lr" : [5e-6],

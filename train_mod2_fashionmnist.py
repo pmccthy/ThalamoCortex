@@ -49,7 +49,7 @@ hyperparam_grid = {
     # model hyperparams
     "input_size" : [28 * 28],
     "output_size" : [10],
-    "ctx_layer_size" : [128],
+    "ctx_layer_size" : [256],
     "thal_layer_size" : [64],
     "thalamocortical_type" : ["multi_post_activation"],
     "thal_reciprocal" : [True], 
@@ -58,7 +58,7 @@ hyperparam_grid = {
     # training hyperparams
     "lr" : [5e-6],
     "loss" : [torch.nn.CrossEntropyLoss()],
-    "epochs": [400],
+    "epochs": [800],
     "ohe_targets": [True],
     "track_loss_step": [50]
 }
@@ -183,7 +183,8 @@ if __name__ == "__main__":
                                             num_epochs=hyperparams["epochs"],
                                             device=device,
                                             loss_track_step=hyperparams["track_loss_step"])
-            
+            logger.info(f"Model trained in {train_time:.2f} s")
+
             # evaluate model
             logger.info("Evaluating model...")
             losses = evaluate(model=model,

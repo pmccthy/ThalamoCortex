@@ -19,7 +19,7 @@ import pickle
 from models import CTCNet
 from utils import make_grid, create_data_loaders, train, evaluate
 
-# Create a logger
+# create a logger
 logger = logging.getLogger("MyLogger")
 logger.setLevel(logging.DEBUG)  # Set logging level
 
@@ -35,7 +35,7 @@ class LoggerWriter:
     def flush(self):
         pass  # Needed for compatibility with sys.stdout
 
-# Save paths
+# save paths
 data_save_path = "/Users/patmccarthy/Documents/thalamocortex/data"
 results_save_path = "/Users/patmccarthy/Documents/thalamocortex/results"
 
@@ -43,17 +43,17 @@ results_save_path = "/Users/patmccarthy/Documents/thalamocortex/results"
 hyperparam_grid = {
     # data hyperparams
     "norm" : ["normalise"],
-    "dataset" : ["FashionMNIST"],
+    "dataset" : ["CIFAR10"],
     "save_path" : ["/Users/patmccarthy/Documents/thalamocortex/data"],
     "batch_size" : [32],
     # model hyperparams
-    "input_size" : [28 * 28],
+    "input_size" : [32 * 32],
     "output_size" : [10],
-    "ctx_layer_size" : [256],
+    "ctx_layer_size" : [128],
     "thal_layer_size" : [64],
-    "thalamocortical_type" : ["add"],
-    "thal_reciprocal" : [True], 
-    "thal_to_readout" : [True], 
+    "thalamocortical_type" : [None],
+    "thal_reciprocal" : [False], 
+    "thal_to_readout" : [False], 
     "thal_per_layer" : [False],
     # training hyperparams
     "lr" : [5e-6],
@@ -210,10 +210,10 @@ if __name__ == "__main__":
                 pickle.dump(hyperparams, handle)
             # learning progress
             training_stats = {"train_losses": train_losses,
-                            "val_losses": val_losses,
-                            "final_val_losses": losses,
-                            "state_dicts": state_dicts,
-                            "train_time": train_time}
+                             "val_losses": val_losses,
+                             "final_val_losses": losses,
+                             "state_dicts": state_dicts,
+                             "train_time": train_time}
             with open(Path(f"{save_path_this_model}", "learning.pkl"), "wb") as handle:
                 pickle.dump(training_stats, handle)
             logger.info("Done saving.")
