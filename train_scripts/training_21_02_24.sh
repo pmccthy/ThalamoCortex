@@ -1,0 +1,2 @@
+python train_mod1_leftrightmnist.py --name 21_02_24_mod1_leftrightmnist_gridsearch
+python train_feedforward_minst.py --name 21_02_24_feedforward_mnist_gridsearch

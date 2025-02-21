@@ -1,0 +1,2 @@
+python train_feedforward_fashionmnist.py --name 18_02_24_feedforward_fashionmnist
+python train_feedforward_cifar10.py --name 18_02_24_feedforward_cifar
