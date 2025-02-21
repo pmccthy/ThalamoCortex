@@ -1,4 +1,0 @@
-python train_driver_fashionmnist.py --name 19_02_24_driver_fashionmnist
-python train_feedforward_fashionmnist.py --name 19_02_24_feedforward_fashionmnist
-python train_mod1_fashionmnist.py --name 19_02_24_mod1_fashionmnist
-python train_mod2_fashionmnist.py --name 19_02_24_mod2_fashionmnist

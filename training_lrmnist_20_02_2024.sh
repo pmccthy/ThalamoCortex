@@ -1,4 +1,0 @@
-python train_mod1_leftrightmnist.py --name 20_02_24_mod1_leftrightmnist
-python train_mod2_leftrightmnist.py --name 20_02_24_mod2_leftrightmnist
-python train_driver_leftrightmnist.py --name 20_02_24_driver_leftrightmnist
-python train_feedforward_leftrightmnist.py --name 20_02_24_feedforward_leftrightmnist
