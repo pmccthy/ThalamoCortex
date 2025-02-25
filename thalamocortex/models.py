@@ -273,12 +273,11 @@ class CTCNetThalReadout(CTCNet):
                 thal_to_readout=True, # True or False
                 thal_per_layer=False,
                 ): # if no, mixing from cortical layers # determines spatial precision of connections and degree of spatial mixing
-            
-            super().__init__(self,
-                             input_size,
-                             ctx_output_size,
-                             ctx_layer_size,
-                             thal_layer_size,
+        
+            super().__init__(input_size=input_size,
+                             output_size=ctx_output_size,
+                             ctx_layer_size=ctx_layer_size,
+                             thal_layer_size=thal_layer_size,
                              thalamocortical_type=thalamocortical_type, # None, add (additive pre-sum), multi_pre_sum (multiplicative pre-sum), multi_pre_activation (multiplicative pre-activation), multi_post_activation (multiplicative post-activation)
                              thal_reciprocal=thal_reciprocal, # True or False
                              thal_to_readout=thal_to_readout, # True or False
@@ -306,7 +305,7 @@ class CTCNetThalReadout(CTCNet):
 
     def subforward(self, input, thal=None):
         
-        ctx_output, _, ctx1, ctx2 = super.subforward(input, thal=thal, return_ctx=True)
+        ctx_output, _, ctx1, ctx2 = super().subforward(input, thal=thal)
 
         # thalamocortical projections
         if self.thalamocortical_type is not None:
@@ -325,12 +324,22 @@ class CTCNetThalReadout(CTCNet):
         # no thalamocortical projections (purely feedforward)
         else:
 
-            # initialise thalamic activity with zeros
-            if thal is None:
-                thal1 = torch.zeros([input.size(0), self.thal_layer_size], device=input.device)
-                thal2 = torch.zeros([input.size(0), self.thal_layer_size], device=input.device)     
+           # thalamic area per cortical area
+            if self.thal_per_layer:
+
+                # initialise thalamic activity with zeros
+                if thal is None:
+                    thal1 = torch.zeros([input.size(0), self.thal_layer_size], device=input.device)
+                    thal2 = torch.zeros([input.size(0), self.thal_layer_size], device=input.device)     
+                else:
+                    thal1, thal2 = thal
+
             else:
-                thal1, thal2 = thal
+            
+                # initialise thalamic activity with zeros
+                if thal is None:
+                    thal = torch.zeros([input.size(0), self.thal_layer_size], device=input.device)
+
 
             # compute thalamic activity
             # thalamic area per cortical area

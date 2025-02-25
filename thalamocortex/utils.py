@@ -291,6 +291,47 @@ def evaluate(model, data_loader, optimizer, loss_fn, ohe_targets, num_classes, d
 
     return losses
 
+def evaluate_thalreadout(model, data_loader, optimizer, loss_fn, ohe_targets, num_classes, device, loss_track_step):
+    """
+    TODO: fill in function for evaluating model with thalamic readout
+    """
+    """Validate model for one epoch."""
+    size = len(data_loader) * data_loader.batch_size
+    model.train()
+    losses = []
+    with torch.no_grad():  # skip autograd tracking overhead
+
+        for batch, (X, y) in enumerate(data_loader):
+
+            # cast to torch array if necessary  
+            if type(X) is not torch.Tensor:
+                X = torch.from_numpy(X).to(torch.float32)
+                y = torch.from_numpy(y).to(torch.int64)
+
+            # move data to device where model is being trained
+            X = X.to(device)
+            y = y.to(device)
+
+            # one-hot encode targets if specified
+            if ohe_targets:
+                y_one_hot = torch.nn.functional.one_hot(y, num_classes=num_classes).float()
+
+            # autograd fwd pass            
+            _, y_est = model(X)
+
+            # compute loss
+            loss = loss_fn(y_est, y_one_hot)
+
+            # print loss every 500th batch
+            if batch % loss_track_step == 0:
+                loss, current = loss.item(), (batch + 1) * len(X)
+                print(
+                    f"validation batch {batch+1}, loss: {loss:.3f}, {current}/{size} datapoints"
+                )
+                losses.append(loss)
+
+    return losses
+
 def train_one_epoch_thalreadout(model,
                                 data_loader,
                                 optimizer,
@@ -351,6 +392,56 @@ def train_one_epoch_thalreadout(model,
 
     return losses, state_dict
 
+
+def train_thalreadout(model,
+                      trainset_loader,
+                      valset_loader,
+                      optimizer,
+                      loss_fn,
+                      ohe_targets,
+                      num_classes,
+                      num_epochs,
+                      device,
+                      loss_track_step,
+                      get_state_dict=False):
+    """Train model and regularly evaluate on validation set."""
+    start_time = time.time()
+
+    print("Training...")
+    train_losses_epochs = []
+    val_losses_epochs = []
+    state_dicts = []
+    for epoch in range(num_epochs):
+        print(f"Beginning epoch {epoch+1}/{num_epochs}")
+        train_losses, state_dict = train_one_epoch_thalreadout(
+           model,
+           trainset_loader,
+           optimizer,
+           loss_fn,
+           ohe_targets,
+           num_classes,
+           device,
+           loss_track_step,
+           get_state_dict=True,
+        )
+        val_losses = evaluate_thalreadout(
+           model,
+           valset_loader,
+           optimizer,
+           loss_fn,
+           ohe_targets,
+           num_classes,
+           device,
+           loss_track_step,
+        )
+        train_losses_epochs.append(train_losses)
+        val_losses_epochs.append(val_losses)
+        state_dicts.append(state_dict)
+        print(f"Epoch {epoch+1}/{num_epochs} done")
+    train_time = time.time() - start_time
+    print(f"Finished training in {train_time:.2f} seconds.")
+
+    return train_losses_epochs, val_losses_epochs, state_dicts, train_time 
 
 
 def train_one_epoch_thalreadout_ctx_readout(model,
