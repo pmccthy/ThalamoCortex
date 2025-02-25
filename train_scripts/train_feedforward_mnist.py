@@ -56,7 +56,7 @@ hyperparam_grid = {
     "thal_to_readout" : [False], 
     "thal_per_layer" : [False],
     # training hyperparams
-    "lr" : [5e-6],
+    "lr" : [1e-6],
     "loss" : [torch.nn.CrossEntropyLoss()],
     "epochs": [800],
     "ohe_targets": [True],

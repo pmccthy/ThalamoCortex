@@ -2,6 +2,7 @@
 Utility functions.
 Author: patrick.mccarthy@dtc.ox.ac.uk
 """
+import copy
 import time
 import pickle
 from pathlib import Path
@@ -28,7 +29,7 @@ class CustomDataLoader(tuple):
         self.values = values
         self.batch_size = batch_size
 
-def create_data_loaders_LeftRightMNIST(path, batch_size, normalise="normalise"):
+def create_data_loaders_custom_datasets(path, batch_size, normalise="normalise"):
     """
     Create data loader for LeftRightMNIST which is analagous to torch loaders. 
     """
@@ -67,15 +68,14 @@ def normalise_data(x):
     return (x - np.min(x))/(np.max(x) - np.min(x))
 
 def standardise_data(x):
-    # TODO: fill this in
-    return x
+    return x - np.mean(x)/np.var(x)
 
 def create_data_loaders(dataset, norm, batch_size, save_path):
 
     metadata = {}
-    if dataset == "LeftRightMNIST":
-        path = Path(save_path, "LeftRightMNIST")
-        trainset_loader, testset_loader, metadata = create_data_loaders_LeftRightMNIST(path, batch_size, normalise=norm)
+    if dataset in ["LeftRightMNIST", "BinaryMNIST"]:
+        path = Path(save_path, dataset)
+        trainset_loader, testset_loader, metadata = create_data_loaders_custom_datasets(path, batch_size, normalise=norm)
     else:
         if dataset == "CIFAR10":
             transform = transforms.Compose([
@@ -122,28 +122,6 @@ def create_data_loaders(dataset, norm, batch_size, save_path):
         testset_loader = torch.utils.data.DataLoader(dataset = testset,
                                     batch_size = batch_size,
                                     shuffle = True)
-        # if dataset == "MNIST":
-        #     trainset = datasets.MNIST(root=save_path,
-        #                               train=True,
-        #                               download=True,
-        #                               transform=transform)
-        #     testset = datasets.MNIST(root=save_path,
-        #                               train=False,
-        #                               download=True,
-        #                               transform=transform)
-        #     metadata["classes"] = trainset.classes
-        # elif dataset == "FashionMNIST":
-        #     trainset = datasets.FashionMNIST(root=save_path,
-        #                                      train=True,
-        #                                      download=True,
-        #                                      transform=transform)
-        #     testset = datasets.FashionMNIST(root=save_path,
-        #                                     train=False,
-        #                                     download=True,
-        #                                     transform=transform)
-            
-        #     metadata["classes"] = trainset.classes
-
     
     return trainset_loader, testset_loader, metadata
 
@@ -185,7 +163,8 @@ def train(model,
           num_classes,
           num_epochs,
           device,
-          loss_track_step):
+          loss_track_step,
+          get_state_dict=False):
     """Train model and regularly evaluate on validation set."""
     start_time = time.time()
 
@@ -268,7 +247,7 @@ def train_one_epoch(model, data_loader, optimizer, loss_fn, ohe_targets, num_cla
             )
 
     if get_state_dict:
-        state_dict = model.state_dict()
+        state_dict = copy.deepcopy(model.state_dict())
     else:
         state_dict = None # return null value so number of return arguments always the same
 
@@ -312,6 +291,142 @@ def evaluate(model, data_loader, optimizer, loss_fn, ohe_targets, num_classes, d
 
     return losses
 
+def train_one_epoch_thalreadout(model,
+                                data_loader,
+                                optimizer,
+                                loss_fn,
+                                ohe_targets,
+                                num_classes,
+                                device,
+                                loss_track_step,
+                                get_state_dict=False):
+    """
+    Train thalamic readout model for one epoch.
+    Fine-tuning using thalamic loss only.
+    TODO: implement trainer for 
+    """
+    size = len(data_loader) * data_loader.batch_size
+    model.train()
+    losses = []
+    for batch, (X, y) in enumerate(data_loader):
+        
+        # cast to torch array if necessary
+        if type(X) is not torch.Tensor:
+            X = torch.from_numpy(X).to(torch.float32)
+            y = torch.from_numpy(y).to(torch.int64)
+
+        # move data to device where model is being trained
+        X = X.to(device)
+        y = y.to(device)
+        
+        # one-hot encode targets if specified
+        if ohe_targets:
+            y_one_hot = torch.nn.functional.one_hot(y, num_classes=num_classes).float()
+        
+        # fwd pass
+        _, y_est = model(X)
+
+        # compute loss
+        loss = loss_fn(y_est, y_one_hot)
+
+        # autograd bwd pass
+        loss.backward()  # compute gradients
+        optimizer.step()  # update params
+        optimizer.zero_grad()  # ensure not tracking gradients for next iteration
+
+        # get loss
+        loss, current = loss.item(), (batch + 1) * len(X)
+        losses.append(loss)
+
+        # print loss every Nth batch
+        if batch % loss_track_step == 0:
+            print(
+                f"training batch {batch+1}, loss: {loss:.3f}, {current}/{size} datapoints"
+            )
+
+    if get_state_dict:
+        state_dict = copy.deepcopy(model.state_dict())
+    else:
+        state_dict = None # return null value so number of return arguments always the same
+
+    return losses, state_dict
+
+
+
+def train_one_epoch_thalreadout_ctx_readout(model,
+                                            data_loader,
+                                            optimizer,
+                                            loss_fn,
+                                            ohe_targets,
+                                            num_classes,
+                                            device,
+                                            loss_track_step,
+                                            get_state_dict=False):
+    """
+    Train thalamic readout model for one epoch.
+    Fine-tuning using thalamic loss only.
+    TODO: implement trainer for 
+    """
+    size = len(data_loader) * data_loader.batch_size
+    model.train()
+    losses_ctx = []
+    losses_thal = []
+    losses = {"ctx": [], "thal": [], "combined": []}
+    for batch, (X, y_thal, y_ctx) in enumerate(data_loader):
+        
+        # cast to torch array if necessary
+        if type(X) is not torch.Tensor:
+            X = torch.from_numpy(X).to(torch.float32)
+            y_ctx = torch.from_numpy(y_ctx).to(torch.int64)
+            y_thal = torch.from_numpy(y_thal).to(torch.int64)
+
+        # move data to device where model is being trained
+        X = X.to(device)
+        y_ctx = y_ctx.to(device)
+        y_thal = y_thal.to(device)
+
+        # one-hot encode targets if specified
+        if ohe_targets:
+            y_ctx_one_hot = torch.nn.functional.one_hot(y_ctx, num_classes=num_classes).float()
+            y_thal_one_hot = torch.nn.functional.one_hot(y_thal, num_classes=num_classes).float()
+
+        # fwd pass
+        y_ctx_est, y_thal_est = model(X)
+
+        # compute loss
+        loss_ctx = loss_fn(y_ctx_est, y_ctx_one_hot)
+        loss_thal = loss_fn(y_thal_est, y_thal_one_hot)
+        loss = loss_ctx + loss_thal
+
+        # autograd bwd pass
+        loss.backward()  # compute gradients
+        optimizer.step()  # update params
+        optimizer.zero_grad()  # ensure not tracking gradients for next iteration
+
+        # get loss
+        loss, current = loss.item(), (batch + 1) * len(X)
+        loss_ctx, _ = loss_ctx.item(), (batch + 1) * len(X)
+        loss_thal, _ = loss_thal.item(), (batch + 1) * len(X)
+
+        losses["ctx"].append(loss_ctx)
+        losses["thal"].append(loss_thal)
+        losses["combined"].append(loss)
+
+        # print loss every Nth batch
+        if batch % loss_track_step == 0:
+            print(
+                f"training batch {batch+1}, loss: {loss:.3f}, {current}/{size} datapoints"
+            )
+
+    if get_state_dict:
+        state_dict = copy.deepcopy(model.state_dict())
+    else:
+        state_dict = None # return null value so number of return arguments always the same
+
+    return losses, state_dict
+
+# DYNAMIC LR TRAINERS 
+# TODO: REMOVE
 groups={"group1": [1,2,3,4],
         "group2": [5,6,7,8]}
 
@@ -462,3 +577,6 @@ def train_one_epoch_plastic_mod(model, data_loader, optimizer, loss_fn, ohe_targ
             losses.append(loss)
 
     return losses
+
+def activation_hook(module, input, output, activations):
+    activations[module] = output

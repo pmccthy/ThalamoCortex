@@ -1,0 +1,1 @@
+python train_feedforward_mnist.py --name 25_02_24_feedforward_mnist_gridsearch2

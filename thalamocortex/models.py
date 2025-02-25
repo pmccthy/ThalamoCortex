@@ -32,7 +32,7 @@ class CTCNet(nn.Module):
     # TODO: implement option for turning off gradients for specific connections (analagous to removing error feedback projections)
     # TODO: extend to allow for any number of cortical and thalamic layers (when one-to-one correspondence)
     # TODO: add dropout layers with configurable sparsity
-   """
+    """
     def __init__(self,
                 input_size,
                 output_size,
@@ -135,10 +135,10 @@ class CTCNet(nn.Module):
         input = input.view(input.size(0), -1) # reshape input to flatten and remove second dimension (using view rather than assigning more memory)
 
         # one iteration of forward subroutine to get thalamic activity
-        _, thal = self.subforward(input)
+        _, thal, _, _ = self.subforward(input)
 
         # second iteration of forward subroutine to get output with forward activity in
-        output, _ = self.subforward(input, thal=thal)
+        output, _, _, _ = self.subforward(input, thal=thal)
 
         return output
 
@@ -183,14 +183,14 @@ class CTCNet(nn.Module):
                     thal1_to_readout = self.thal1_to_readout_projections(thal1)
                     thal2_to_readout = self.thal2_to_readout_projections(thal2)
                     if self.thalamocortical_type == "add":
-                        output = self.readout(ctx2 + thal1_to_readout + thal2_to_readout)
+                        ctx_output = self.readout(ctx2 + thal1_to_readout + thal2_to_readout)
                     elif self.thalamocortical_type == "multi_pre_sum":
-                        output = self.readout(ctx2 * thal1_to_readout * thal2_to_readout)
+                        ctx_output = self.readout(ctx2 * thal1_to_readout * thal2_to_readout)
                     elif self.thalamocortical_type in ["multi_post_activation", "multi_pre_activation"]:
-                        output = self.readout(ctx2) * thal1_to_readout * thal2_to_readout
+                        ctx_output = self.readout(ctx2) * thal1_to_readout * thal2_to_readout
                 # handle case for when reciprocal feedback but no readout feedback 
                 else: 
-                    output = self.readout(ctx2)
+                    ctx_output = self.readout(ctx2)
 
             # single thalamic area 
             else:
@@ -215,7 +215,7 @@ class CTCNet(nn.Module):
                     elif self.thalamocortical_type == "multi_post_activation":
                         ctx1 = self.ctx1(input) * thal_to_ctx1
                         ctx2 = self.ctx2(ctx1) * thal_to_ctx2
-                # handle case for when readout feedback only    
+                # handle case for when readout feedback only
                 else: 
                     ctx1 = self.ctx1(input)
                     ctx2 = self.ctx2(ctx1)
@@ -224,14 +224,15 @@ class CTCNet(nn.Module):
                 if self.thal_to_readout:
                     thal_to_readout = self.thal_to_readout_projections(thal)
                     if self.thalamocortical_type == "add":
-                        output = self.readout(ctx2 + thal_to_readout)
+                        ctx_output = self.readout(ctx2 + thal_to_readout)
                     elif self.thalamocortical_type == "multi_pre_sum":
-                        output = self.readout(ctx2 * thal_to_readout)
+                        ctx_output = self.readout(ctx2 * thal_to_readout)
                     elif self.thalamocortical_type in ["multi_post_activation", "multi_pre_activation"]:
-                        output = self.readout(ctx2) * thal_to_readout
+                        ctx_output = self.readout(ctx2) * thal_to_readout
                # handle case for when reciprocal feedback but no readout feedback 
                 else: 
-                    output = self.readout(ctx2)
+                    ctx_output = self.readout(ctx2)
+
             
             # compute thalamic activity for next timestep
             if self.thal_per_layer:
@@ -249,23 +250,111 @@ class CTCNet(nn.Module):
             ctx2 = self.ctx2(ctx1)
 
             # compute readout activity 
-            output = self.readout(ctx2)
+            ctx_output = self.readout(ctx2)
 
-        return output, thal
-        
+        # cortical activity returned because useful to have for child classes
+        return ctx_output, thal, ctx1, ctx2    
+                 
     def summary(self):
         summary(self)
 
-class CTCNetPlasticityMod(nn.Module):
+class CTCNetThalReadout(CTCNet):
     """
-    Class for models which use thalamic layers for plasticity modulation.
-    In these models, thalamic activity will be computed, but there will be no
-    explicit thalamocortical projections. Instead, these will be fed into the 
-    
-    NOTE: forward function must output thalamic states
+    CTCNet model with readout layer.
     """
-    
-    def forward():
-        y_est = 0
-        thal = 0
-        return y_est, thal
+    def __init__(self,
+                input_size,
+                ctx_output_size,
+                thal_output_size,
+                ctx_layer_size,
+                thal_layer_size,
+                thalamocortical_type=None, # None, add (additive pre-sum), multi_pre_sum (multiplicative pre-sum), multi_pre_activation (multiplicative pre-activation), multi_post_activation (multiplicative post-activation)
+                thal_reciprocal=True, # True or False
+                thal_to_readout=True, # True or False
+                thal_per_layer=False,
+                ): # if no, mixing from cortical layers # determines spatial precision of connections and degree of spatial mixing
+            
+            super().__init__(self,
+                             input_size,
+                             ctx_output_size,
+                             ctx_layer_size,
+                             thal_layer_size,
+                             thalamocortical_type=thalamocortical_type, # None, add (additive pre-sum), multi_pre_sum (multiplicative pre-sum), multi_pre_activation (multiplicative pre-activation), multi_post_activation (multiplicative post-activation)
+                             thal_reciprocal=thal_reciprocal, # True or False
+                             thal_to_readout=thal_to_readout, # True or False
+                             thal_per_layer=thal_per_layer)
+            
+            self.thal_output_size = thal_output_size
+
+            # Thalamic readout layer (not to be confused with thalamic connections to cortical readout layer, which is simply referred to as "readout")
+            self.thal_readout = nn.Sequential(
+                nn.Linear(self.thal_layer_size, self.thal_output_size),
+            )
+
+    def forward(self, input, thal=None):
+        
+        # flatten input (row-major)
+        input = input.view(input.size(0), -1) # reshape input to flatten and remove second dimension (using view rather than assigning more memory)
+
+        # one iteration of forward subroutine to get thalamic activity
+        _, thal, _ = self.subforward(input)
+
+        # second iteration of forward subroutine to get output with forward activity in
+        ctx_output, thal_output, _ = self.subforward(input, thal=thal)
+
+        return ctx_output, thal_output
+
+    def subforward(self, input, thal=None):
+        
+        ctx_output, _, ctx1, ctx2 = super.subforward(input, thal=thal, return_ctx=True)
+
+        # thalamocortical projections
+        if self.thalamocortical_type is not None:
+
+            # thalamic area per cortical area
+            if self.thal_per_layer:
+
+                # compute thalamic area readout
+                thal_output = self.thal_readout(thal2)
+
+            else:
+
+                # compute thalamic area readout
+                thal_output = self.thal_readout(thal)
+
+        # no thalamocortical projections (purely feedforward)
+        else:
+
+            # initialise thalamic activity with zeros
+            if thal is None:
+                thal1 = torch.zeros([input.size(0), self.thal_layer_size], device=input.device)
+                thal2 = torch.zeros([input.size(0), self.thal_layer_size], device=input.device)     
+            else:
+                thal1, thal2 = thal
+
+            # compute thalamic activity
+            # thalamic area per cortical area
+            if self.thal_per_layer:
+                
+                # compute thalamic activity for next timestep (and for readout)
+                thal1 = self.thal1(ctx1)
+                thal2 = self.thal1(ctx2)
+                thal = [thal1, thal2]
+            
+                # compute thalamic area readout
+                thal_output = self.thal_readout(thal2)
+
+            else:
+
+                # compute thalamic activity for next timestep (and for readout)
+                input_thal = torch.cat([ctx1, ctx2], axis=1)
+                thal = self.thal(input_thal)
+
+                # compute thalamic area readout
+                thal_output = self.thal_readout(thal)
+
+            # compute readout activity 
+            if self.thal_readout:
+                ctx_output = self.readout(ctx2)
+
+        return ctx_output, thal_output, thal
