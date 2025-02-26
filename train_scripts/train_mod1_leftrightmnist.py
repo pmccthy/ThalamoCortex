@@ -182,7 +182,8 @@ if __name__ == "__main__":
                                             num_classes=len(metadata["classes"]),
                                             num_epochs=hyperparams["epochs"],
                                             device=device,
-                                            loss_track_step=hyperparams["track_loss_step"])
+                                            loss_track_step=hyperparams["track_loss_step"],
+                                            get_state_dict=True)
             logger.info("Model trained in {train_time:.2f} s")
   
             # evaluate model

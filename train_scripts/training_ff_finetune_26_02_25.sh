@@ -1,0 +1,1 @@
+python train_ff_finetune.py --name 26_02_24_feedforward_finetune_binarymnist
