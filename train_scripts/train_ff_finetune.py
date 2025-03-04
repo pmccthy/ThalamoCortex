@@ -16,6 +16,7 @@ from pathlib import Path
 import numpy as np
 import torch
 import pickle
+import wandb
 
 from thalamocortex.models import CTCNetThalReadout
 from thalamocortex.utils import make_grid, create_data_loaders, train_thalreadout, evaluate_thalreadout, LoggerWriter
@@ -37,12 +38,12 @@ hyperparam_grid = {
     "batch_size" : [32],
     # model hyperparams
     "thal_output_size": [2],
-    "pretrained_epoch": [200],
+    "pretrained_epoch": [799],
     "pretrained_model_path": ["/Users/patmccarthy/Documents/thalamocortex/results/25_02_24_feedforward_mnist_gridsearch/0_CTCNet_TC_none/model.pth"],
     # training hyperparams
     "lr" : [5e-6],
     "loss" : [torch.nn.CrossEntropyLoss()],
-    "epochs": [800],
+    "epochs": [50],
     "ohe_targets": [True],
     "track_loss_step": [50]
 }
@@ -96,7 +97,16 @@ if __name__  == "__main__":
 
     num_comb = len(model_param_grid)
     for hp_comb_idx, hyperparams in enumerate(model_param_grid):
-        
+       
+        # Start a new wandb run to track this script.
+        run = wandb.init(
+            # Set the wandb entity where your project will be logged (generally your team name).
+            entity="pmccthy-university-of-oxford",
+            # Set the wandb project where this run will be logged.
+            project="thalamocortex",
+            # Track hyperparameters and run metadata.
+            config=deepcopy(hyperparams)
+        ) 
         logger.info(f"Running hyperparameter combination {hp_comb_idx+1} of {num_comb}")
 
         # create readable tag for saving
@@ -128,7 +138,6 @@ if __name__  == "__main__":
             # load training progress
             with open(learning_path, "rb") as handle:
                 learning = pickle.load(handle)
-                print(f"{learning.keys()=}")
             results = {"val_losses": learning["val_losses"],
                        "train_losses": learning["train_losses"],
                        "train_time": learning["train_time"],
@@ -161,7 +170,6 @@ if __name__  == "__main__":
             # add these weights to backbone weights object
             thal_unique_params = []
             for param_name in model_thal_init_weights.keys():
-                print(param_name)
                 if param_name not in list(weights.keys()):
                     thal_unique_params.append(param_name)
                     weights[param_name] = model_thal_init_weights[param_name]
@@ -172,11 +180,12 @@ if __name__  == "__main__":
             # load data
             trainset_loader, testset_loader, metadata = create_data_loaders(hyperparams["dataset"], "normalise", 32, "/Users/patmccarthy/Documents/thalamocortex/data")
 
+
             # define loss and optimiser
             loss_fn = deepcopy(hyperparams["loss"])
             optimizer = torch.optim.Adam(model_thal.parameters(),
                                         lr = hyperparams["lr"])
-            
+        
             # train model
             train_losses, val_losses, state_dicts, train_time = train_thalreadout(model=model_thal,
                                                                                             trainset_loader=trainset_loader,
@@ -184,11 +193,12 @@ if __name__  == "__main__":
                                                                                             optimizer=optimizer,
                                                                                             loss_fn=loss_fn,
                                                                                             ohe_targets=hyperparams["ohe_targets"],
-                                                                                            num_classes=2,
+                                                                                            num_classes=len(metadata["classes"]),
                                                                                             num_epochs=hyperparams["epochs"],
                                                                                             device=device,
                                                                                             loss_track_step=hyperparams["track_loss_step"],
-                                                                                            get_state_dict=True)
+                                                                                            get_state_dict=True,
+                                                                                            wandb_run=run)
 
             # evaluate model
             logger.info(f"Evaluating model...")
@@ -215,15 +225,18 @@ if __name__  == "__main__":
                 pickle.dump(hyperparams, handle)
             # learning progress
             training_stats = {"train_losses": train_losses,
-                            "val_losses": val_losses,
-                            "final_val_losses": losses,
-                            "state_dicts": state_dicts,
-                            "train_time": train_time}
+                              "val_losses": val_losses,
+                              "final_val_losses": losses,
+                              "state_dicts": state_dicts,
+                              "train_time": train_time}
             with open(Path(f"{save_path_this_model}", "learning.pkl"), "wb") as handle:
                 pickle.dump(training_stats, handle)
             logger.info("Done saving.")
 
             logger.info(f"Successfully completed hyperparameter combination {hp_comb_idx+1} of {num_comb}")
-        
+
+            # finish wandb run and upload remaining data
+            run.finish()
+
         except Exception as e:
             logger.info(f"Failed hyperparameter combination {hp_comb_idx+1} of {num_comb} with exception: {e}")
