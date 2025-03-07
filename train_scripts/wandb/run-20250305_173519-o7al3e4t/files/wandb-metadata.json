@@ -1,0 +1,25 @@
+{
+    "os": "macOS-10.16-x86_64-i386-64bit",
+    "python": "3.10.16",
+    "heartbeatAt": "2025-03-05T17:35:22.514158",
+    "startedAt": "2025-03-05T17:35:19.408690",
+    "docker": null,
+    "cpu_count": 8,
+    "cuda": null,
+    "args": [
+        "--name",
+        "04_03_25_feedforward_finetune_binarymnist_run6"
+    ],
+    "state": "running",
+    "program": "/Users/patmccarthy/Documents/ThalamoCortex/train_scripts/train_ff_finetune.py",
+    "codePath": "train_scripts/train_ff_finetune.py",
+    "git": {
+        "remote": "https://github.com/pmccthy/ThalamoCortex",
+        "commit": "bde848263e37769119453a732c959f1bd75ceed3"
+    },
+    "email": "pat.mccarthy1@aol.com",
+    "root": "/Users/patmccarthy/Documents/ThalamoCortex",
+    "host": "Pats-MacBook-Pro.local",
+    "username": "patmccarthy",
+    "executable": "/Users/patmccarthy/miniconda3/envs/thalamocortex/bin/python"
+}

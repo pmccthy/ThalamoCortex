@@ -1,0 +1,38 @@
+wandb_version: 1
+
+_wandb:
+  desc: null
+  value:
+    cli_version: 0.12.21
+    framework: torch
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    python_version: 3.10.16
+    start_time: 1741099293
+    t:
+      1:
+      - 1
+      - 41
+      - 55
+      2:
+      - 1
+      - 41
+      - 55
+      3:
+      - 16
+      4: 3.10.16
+      5: 0.12.21
+      8:
+      - 5
+architecture:
+  desc: null
+  value: CTCNetThalReadout
+dataset:
+  desc: null
+  value: BinaryMNIST
+epochs:
+  desc: null
+  value: 50
+learning_rate:
+  desc: null
+  value: 5.0e-06

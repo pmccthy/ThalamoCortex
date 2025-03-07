@@ -1,8 +1,3 @@
-"""
-Train a grid of CTCNet models with "modulator-type" thalamocortical projections of the second kind.
-Author: patrick.mccarthy@dtc.ox.ac.uk
-"""
-
 import os
 import sys
 import logging
@@ -15,6 +10,7 @@ from pathlib import Path
 import numpy as np
 import torch
 import pickle
+import wandb
 
 from models import CTCNet
 from utils import make_grid, create_data_loaders, train, evaluate
@@ -49,8 +45,8 @@ hyperparam_grid = {
     # model hyperparams
     "input_size" : [28 * 28],
     "output_size" : [10],
-    "ctx_layer_size" : [128],
-    "thal_layer_size" : [64],
+    "ctx_layer_size" : [32],
+    "thal_layer_size" : [16],
     "thalamocortical_type" : ["multi_post_activation"],
     "thal_reciprocal" : [True], 
     "thal_to_readout" : [False], 
@@ -115,6 +111,17 @@ if __name__ == "__main__":
     # number of parameter combinations
     num_comb = len(model_param_grid)
     for hp_comb_idx, hyperparams in enumerate(model_param_grid):
+        
+        # Start a new wandb run to track this script.
+        run = wandb.init(
+            # Set the wandb entity where your project will be logged (generally your team name).
+            entity="pmccthy-university-of-oxford",
+            # Set the wandb project where this run will be logged.
+            project="thalamocortex",
+            # Track hyperparameters and run metadata.
+            config=deepcopy(hyperparams),
+            name=f"{str(os.path.basename(__file__)).split('.py')[0]}_hp{hp_comb_idx}"
+        ) 
         logger.info(f"Running hyperparameter combination {hp_comb_idx+1} of {num_comb}")
 
         # TODO: select trainer function based on whether dynamic learning rates chosen
@@ -173,7 +180,7 @@ if __name__ == "__main__":
             logger.info("Done.")
 
             # train model
-            train_losses, val_losses, state_dicts, train_time = train(model=model,
+            train_losses, val_losses, train_topk_accs, val_topk_accs, state_dicts, train_time = train(model=model,
                                             trainset_loader=trainset_loader,
                                             valset_loader=testset_loader,
                                             optimizer=optimizer,
@@ -182,11 +189,12 @@ if __name__ == "__main__":
                                             num_classes=len(metadata["classes"]),
                                             num_epochs=hyperparams["epochs"],
                                             device=device,
-                                            loss_track_step=hyperparams["track_loss_step"])
+                                            loss_track_step=hyperparams["track_loss_step"],
+                                            wandb_run=run)
             
             # evaluate model
             logger.info("Evaluating model...")
-            losses = evaluate(model=model,
+            losses, topk_accs = evaluate(model=model,
                             data_loader=testset_loader,
                             optimizer=optimizer,
                             loss_fn=loss_fn,
@@ -208,11 +216,14 @@ if __name__ == "__main__":
             with open(Path(f"{save_path_this_model}", "hyperparams.pkl"), "wb") as handle:
                 pickle.dump(hyperparams, handle)
             # learning progress
-            training_stats = {"train_losses": train_losses,
-                            "val_losses": val_losses,
-                            "final_val_losses": losses,
-                            "state_dicts": state_dicts,
-                            "train_time": train_time}
+            losses, topk_accs = evaluate(model=model,
+                            data_loader=testset_loader,
+                            optimizer=optimizer,
+                            loss_fn=loss_fn,
+                            ohe_targets=hyperparams["ohe_targets"],
+                            num_classes=len(metadata["classes"]),
+                            device=device,
+                            loss_track_step=hyperparams["track_loss_step"])
             with open(Path(f"{save_path_this_model}", "learning.pkl"), "wb") as handle:
                 pickle.dump(training_stats, handle)
             logger.info("Done saving.")

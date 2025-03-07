@@ -1,0 +1,22 @@
+{
+    "os": "macOS-10.16-x86_64-i386-64bit",
+    "python": "3.10.16",
+    "heartbeatAt": "2025-03-04T14:40:33.612991",
+    "startedAt": "2025-03-04T14:40:31.497593",
+    "docker": null,
+    "cpu_count": 8,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "/Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb_test.py",
+    "codePath": "train_scripts/wandb_test.py",
+    "git": {
+        "remote": "https://github.com/pmccthy/ThalamoCortex",
+        "commit": "1d4a6cdb78652415a8e43b6049748815d18a5610"
+    },
+    "email": "pat.mccarthy1@aol.com",
+    "root": "/Users/patmccarthy/Documents/ThalamoCortex",
+    "host": "Pats-MacBook-Pro.local",
+    "username": "patmccarthy",
+    "executable": "/Users/patmccarthy/miniconda3/envs/thalamocortex/bin/python"
+}

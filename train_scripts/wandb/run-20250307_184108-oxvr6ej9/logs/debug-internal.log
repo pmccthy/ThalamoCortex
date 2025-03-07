@@ -1,0 +1,121 @@
+2025-03-07 18:41:10,555 INFO    MainThread:37566 [internal.py:wandb_internal():90] W&B internal server running at pid: 37566, started at: 2025-03-07 18:41:10.554532
+2025-03-07 18:41:10,557 INFO    WriterThread:37566 [datastore.py:open_for_write():75] open: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/run-oxvr6ej9.wandb
+2025-03-07 18:41:10,560 DEBUG   SenderThread:37566 [sender.py:send():236] send: header
+2025-03-07 18:41:10,560 DEBUG   SenderThread:37566 [sender.py:send():236] send: run
+2025-03-07 18:41:10,904 INFO    SenderThread:37566 [dir_watcher.py:__init__():216] watching files in: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files
+2025-03-07 18:41:10,904 INFO    SenderThread:37566 [sender.py:_start_run_threads():815] run started: oxvr6ej9 with start time 1741372868
+2025-03-07 18:41:10,904 DEBUG   SenderThread:37566 [sender.py:send():236] send: summary
+2025-03-07 18:41:10,904 INFO    SenderThread:37566 [sender.py:_save_file():952] saving file wandb-summary.json with policy end
+2025-03-07 18:41:10,906 DEBUG   HandlerThread:37566 [handler.py:handle_request():140] handle_request: check_version
+2025-03-07 18:41:10,906 DEBUG   SenderThread:37566 [sender.py:send_request():250] send_request: check_version
+2025-03-07 18:41:11,284 DEBUG   HandlerThread:37566 [handler.py:handle_request():140] handle_request: run_start
+2025-03-07 18:41:11,290 DEBUG   HandlerThread:37566 [meta.py:__init__():35] meta init
+2025-03-07 18:41:11,293 DEBUG   HandlerThread:37566 [meta.py:__init__():49] meta init done
+2025-03-07 18:41:11,294 DEBUG   HandlerThread:37566 [meta.py:probe():209] probe
+2025-03-07 18:41:11,307 DEBUG   HandlerThread:37566 [meta.py:_setup_git():199] setup git
+2025-03-07 18:41:11,337 DEBUG   HandlerThread:37566 [meta.py:_setup_git():206] setup git done
+2025-03-07 18:41:11,338 DEBUG   HandlerThread:37566 [meta.py:_save_pip():53] save pip
+2025-03-07 18:41:11,339 DEBUG   HandlerThread:37566 [meta.py:_save_pip():67] save pip done
+2025-03-07 18:41:11,340 DEBUG   HandlerThread:37566 [meta.py:_save_conda():74] save conda
+2025-03-07 18:41:11,909 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_created():269] file/dir created: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/conda-environment.yaml
+2025-03-07 18:41:11,909 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_created():269] file/dir created: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/requirements.txt
+2025-03-07 18:41:11,910 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_created():269] file/dir created: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/wandb-summary.json
+2025-03-07 18:41:14,651 DEBUG   HandlerThread:37566 [meta.py:_save_conda():84] save conda done
+2025-03-07 18:41:14,651 DEBUG   HandlerThread:37566 [meta.py:probe():247] probe done
+2025-03-07 18:41:14,660 DEBUG   SenderThread:37566 [sender.py:send():236] send: files
+2025-03-07 18:41:14,660 INFO    SenderThread:37566 [sender.py:_save_file():952] saving file wandb-metadata.json with policy now
+2025-03-07 18:41:14,670 DEBUG   HandlerThread:37566 [handler.py:handle_request():140] handle_request: stop_status
+2025-03-07 18:41:14,671 DEBUG   SenderThread:37566 [sender.py:send_request():250] send_request: stop_status
+2025-03-07 18:41:14,896 DEBUG   SenderThread:37566 [sender.py:send():236] send: telemetry
+2025-03-07 18:41:14,912 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/conda-environment.yaml
+2025-03-07 18:41:14,912 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_created():269] file/dir created: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/wandb-metadata.json
+2025-03-07 18:41:14,913 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_created():269] file/dir created: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:41:15,234 INFO    Thread-11 :37566 [upload_job.py:push():138] Uploaded file /var/folders/4g/1kv65jgx1x1558h12tz57s580000gn/T/tmpnqh2500swandb/0veycv38-wandb-metadata.json
+2025-03-07 18:41:16,920 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:41:18,920 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:41:20,927 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:41:22,930 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:41:24,941 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:41:28,992 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:41:29,915 DEBUG   HandlerThread:37566 [handler.py:handle_request():140] handle_request: stop_status
+2025-03-07 18:41:29,917 DEBUG   SenderThread:37566 [sender.py:send_request():250] send_request: stop_status
+2025-03-07 18:41:31,000 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:41:33,006 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:41:35,014 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:41:37,026 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:41:39,049 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:41:39,834 DEBUG   SenderThread:37566 [sender.py:send():236] send: stats
+2025-03-07 18:41:41,054 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:41:42,055 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/config.yaml
+2025-03-07 18:41:43,055 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:41:45,060 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:41:46,049 DEBUG   HandlerThread:37566 [handler.py:handle_request():140] handle_request: stop_status
+2025-03-07 18:41:46,050 DEBUG   SenderThread:37566 [sender.py:send_request():250] send_request: stop_status
+2025-03-07 18:41:47,062 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:41:48,793 DEBUG   HandlerThread:37566 [handler.py:handle_request():140] handle_request: partial_history
+2025-03-07 18:41:48,806 DEBUG   SenderThread:37566 [sender.py:send():236] send: history
+2025-03-07 18:41:48,815 DEBUG   SenderThread:37566 [sender.py:send():236] send: summary
+2025-03-07 18:41:48,819 INFO    SenderThread:37566 [sender.py:_save_file():952] saving file wandb-summary.json with policy end
+2025-03-07 18:41:49,071 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:41:49,072 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/wandb-summary.json
+2025-03-07 18:41:51,072 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:41:53,074 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:41:55,077 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:41:57,082 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:41:59,093 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:01,092 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:01,574 DEBUG   HandlerThread:37566 [handler.py:handle_request():140] handle_request: stop_status
+2025-03-07 18:42:01,576 DEBUG   SenderThread:37566 [sender.py:send_request():250] send_request: stop_status
+2025-03-07 18:42:03,097 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:05,099 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:07,100 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:09,101 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:10,315 DEBUG   SenderThread:37566 [sender.py:send():236] send: stats
+2025-03-07 18:42:11,106 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:11,631 DEBUG   HandlerThread:37566 [handler.py:handle_request():140] handle_request: partial_history
+2025-03-07 18:42:11,633 DEBUG   SenderThread:37566 [sender.py:send():236] send: history
+2025-03-07 18:42:11,634 DEBUG   SenderThread:37566 [sender.py:send():236] send: summary
+2025-03-07 18:42:11,635 INFO    SenderThread:37566 [sender.py:_save_file():952] saving file wandb-summary.json with policy end
+2025-03-07 18:42:12,110 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/wandb-summary.json
+2025-03-07 18:42:13,113 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:15,117 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:16,817 DEBUG   HandlerThread:37566 [handler.py:handle_request():140] handle_request: stop_status
+2025-03-07 18:42:16,818 DEBUG   SenderThread:37566 [sender.py:send_request():250] send_request: stop_status
+2025-03-07 18:42:17,124 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:19,129 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:21,134 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:23,145 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:25,170 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:30,229 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:34,239 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:36,824 DEBUG   HandlerThread:37566 [handler.py:handle_request():140] handle_request: stop_status
+2025-03-07 18:42:36,826 DEBUG   SenderThread:37566 [sender.py:send_request():250] send_request: stop_status
+2025-03-07 18:42:38,248 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:40,250 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:41,225 DEBUG   SenderThread:37566 [sender.py:send():236] send: stats
+2025-03-07 18:42:42,252 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:44,255 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:46,238 DEBUG   HandlerThread:37566 [handler.py:handle_request():140] handle_request: partial_history
+2025-03-07 18:42:46,242 DEBUG   SenderThread:37566 [sender.py:send():236] send: history
+2025-03-07 18:42:46,243 DEBUG   SenderThread:37566 [sender.py:send():236] send: summary
+2025-03-07 18:42:46,244 INFO    SenderThread:37566 [sender.py:_save_file():952] saving file wandb-summary.json with policy end
+2025-03-07 18:42:46,264 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:46,264 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/wandb-summary.json
+2025-03-07 18:42:48,267 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:52,111 DEBUG   HandlerThread:37566 [handler.py:handle_request():140] handle_request: stop_status
+2025-03-07 18:42:52,113 DEBUG   SenderThread:37566 [sender.py:send_request():250] send_request: stop_status
+2025-03-07 18:42:52,273 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:54,276 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:56,284 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:42:58,288 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:43:00,290 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:43:02,292 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:43:04,295 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:43:06,300 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:43:07,347 DEBUG   HandlerThread:37566 [handler.py:handle_request():140] handle_request: stop_status
+2025-03-07 18:43:07,386 DEBUG   SenderThread:37566 [sender.py:send_request():250] send_request: stop_status
+2025-03-07 18:43:08,305 INFO    Thread-7  :37566 [dir_watcher.py:_on_file_modified():286] file/dir modified: /Users/patmccarthy/Documents/ThalamoCortex/train_scripts/wandb/run-20250307_184108-oxvr6ej9/files/output.log
+2025-03-07 18:43:09,824 DEBUG   HandlerThread:37566 [handler.py:handle_request():140] handle_request: partial_history
+2025-03-07 18:43:09,827 DEBUG   SenderThread:37566 [sender.py:send():236] send: history
+2025-03-07 18:43:09,829 DEBUG   SenderThread:37566 [sender.py:send():236] send: summary
+2025-03-07 18:43:09,830 INFO    SenderThread:37566 [sender.py:_save_file():952] saving file wandb-summary.json with policy end

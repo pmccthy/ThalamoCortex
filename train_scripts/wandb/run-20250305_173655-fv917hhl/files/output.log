@@ -1,0 +1,52 @@
+2025-03-05 17:36:59,550 - INFO - Running hyperparameter combination 1 of 1
+2025-03-05 17:36:59,550 - INFO - 0_CTCNet_finetuning_ThalReadout_2
+2025-03-05 17:37:01,404 - INFO - Training...
+2025-03-05 17:37:01,404 - INFO - Beginning epoch 1/50
+2025-03-05 17:37:01,409 - INFO - training batch 1, loss: 1.415, 32/56000 datapoints
+2025-03-05 17:37:01,497 - INFO - training batch 51, loss: 1.318, 1632/56000 datapoints
+2025-03-05 17:37:01,590 - INFO - training batch 101, loss: 1.411, 3232/56000 datapoints
+2025-03-05 17:37:01,685 - INFO - training batch 151, loss: 1.267, 4832/56000 datapoints
+2025-03-05 17:37:01,781 - INFO - training batch 201, loss: 1.245, 6432/56000 datapoints
+2025-03-05 17:37:01,866 - INFO - training batch 251, loss: 1.322, 8032/56000 datapoints
+2025-03-05 17:37:01,955 - INFO - training batch 301, loss: 1.203, 9632/56000 datapoints
+2025-03-05 17:37:02,042 - INFO - training batch 351, loss: 1.311, 11232/56000 datapoints
+2025-03-05 17:37:02,129 - INFO - training batch 401, loss: 1.145, 12832/56000 datapoints
+2025-03-05 17:37:02,214 - INFO - training batch 451, loss: 0.964, 14432/56000 datapoints
+2025-03-05 17:37:02,300 - INFO - training batch 501, loss: 0.957, 16032/56000 datapoints
+2025-03-05 17:37:02,392 - INFO - training batch 551, loss: 0.995, 17632/56000 datapoints
+2025-03-05 17:37:02,490 - INFO - training batch 601, loss: 1.019, 19232/56000 datapoints
+2025-03-05 17:37:02,579 - INFO - training batch 651, loss: 0.977, 20832/56000 datapoints
+2025-03-05 17:37:02,671 - INFO - training batch 701, loss: 0.977, 22432/56000 datapoints
+2025-03-05 17:37:02,754 - INFO - training batch 751, loss: 0.829, 24032/56000 datapoints
+2025-03-05 17:37:02,841 - INFO - training batch 801, loss: 0.731, 25632/56000 datapoints
+2025-03-05 17:37:02,928 - INFO - training batch 851, loss: 0.760, 27232/56000 datapoints
+2025-03-05 17:37:03,011 - INFO - training batch 901, loss: 0.777, 28832/56000 datapoints
+2025-03-05 17:37:03,100 - INFO - training batch 951, loss: 0.694, 30432/56000 datapoints
+2025-03-05 17:37:03,186 - INFO - training batch 1001, loss: 0.694, 32032/56000 datapoints
+2025-03-05 17:37:03,276 - INFO - training batch 1051, loss: 0.720, 33632/56000 datapoints
+2025-03-05 17:37:03,367 - INFO - training batch 1101, loss: 0.637, 35232/56000 datapoints
+2025-03-05 17:37:03,457 - INFO - training batch 1151, loss: 0.637, 36832/56000 datapoints
+2025-03-05 17:37:03,545 - INFO - training batch 1201, loss: 0.636, 38432/56000 datapoints
+2025-03-05 17:37:03,644 - INFO - training batch 1251, loss: 0.566, 40032/56000 datapoints
+2025-03-05 17:37:03,730 - INFO - training batch 1301, loss: 0.485, 41632/56000 datapoints
+2025-03-05 17:37:03,820 - INFO - training batch 1351, loss: 0.467, 43232/56000 datapoints
+2025-03-05 17:37:03,908 - INFO - training batch 1401, loss: 0.543, 44832/56000 datapoints
+2025-03-05 17:37:03,996 - INFO - training batch 1451, loss: 0.518, 46432/56000 datapoints
+2025-03-05 17:37:04,089 - INFO - training batch 1501, loss: 0.494, 48032/56000 datapoints
+2025-03-05 17:37:04,177 - INFO - training batch 1551, loss: 0.458, 49632/56000 datapoints
+2025-03-05 17:37:04,265 - INFO - training batch 1601, loss: 0.479, 51232/56000 datapoints
+2025-03-05 17:37:04,352 - INFO - training batch 1651, loss: 0.406, 52832/56000 datapoints
+2025-03-05 17:37:04,440 - INFO - training batch 1701, loss: 0.399, 54432/56000 datapoints
+2025-03-05 17:37:04,528 - INFO - validation batch 1, loss: 0.360, 32/13984 datapoints
+2025-03-05 17:37:04,574 - INFO - validation batch 51, loss: 0.374, 1632/13984 datapoints
+2025-03-05 17:37:04,631 - INFO - validation batch 101, loss: 0.432, 3232/13984 datapoints
+2025-03-05 17:37:04,681 - INFO - validation batch 151, loss: 0.443, 4832/13984 datapoints
+2025-03-05 17:37:04,730 - INFO - validation batch 201, loss: 0.422, 6432/13984 datapoints
+2025-03-05 17:37:04,778 - INFO - validation batch 251, loss: 0.418, 8032/13984 datapoints
+2025-03-05 17:37:04,826 - INFO - validation batch 301, loss: 0.522, 9632/13984 datapoints
+2025-03-05 17:37:04,873 - INFO - validation batch 351, loss: 0.372, 11232/13984 datapoints
+2025-03-05 17:37:04,921 - INFO - validation batch 401, loss: 0.461, 12832/13984 datapoints
+2025-03-05 17:37:04,956 - INFO - Epoch 1/50 done.
+2025-03-05 17:37:04,957 - INFO - Final validation performance:
+Loss: 0.423, top-1 acc: 0.849top-5 acc: 0.849
+2025-03-05 17:37:04,957 - INFO - Failed hyperparameter combination 1 of 1 with exception: Object of type set is not JSON serializable

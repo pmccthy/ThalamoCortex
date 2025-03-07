@@ -187,7 +187,7 @@ if __name__  == "__main__":
                                         lr = hyperparams["lr"])
         
             # train model
-            train_losses, val_losses, state_dicts, train_time = train_thalreadout(model=model_thal,
+            train_losses, val_losses, train_topk_accs, val_topk_accs, state_dicts, train_time = train_thalreadout(model=model_thal,
                                                                                             trainset_loader=trainset_loader,
                                                                                             valset_loader=testset_loader,
                                                                                             optimizer=optimizer,
@@ -202,7 +202,7 @@ if __name__  == "__main__":
 
             # evaluate model
             logger.info(f"Evaluating model...")
-            losses = evaluate_thalreadout(model=model_thal,
+            losses, topk_accs = evaluate_thalreadout(model=model_thal,
                             data_loader=testset_loader,
                             optimizer=optimizer,
                             loss_fn=loss_fn,
@@ -226,7 +226,10 @@ if __name__  == "__main__":
             # learning progress
             training_stats = {"train_losses": train_losses,
                               "val_losses": val_losses,
+                              "train_topk_accs": train_topk_accs,
+                              "val_topk_accs": val_topk_accs,
                               "final_val_losses": losses,
+                              "final_val_topk_accs": topk_accs,
                               "state_dicts": state_dicts,
                               "train_time": train_time}
             with open(Path(f"{save_path_this_model}", "learning.pkl"), "wb") as handle:

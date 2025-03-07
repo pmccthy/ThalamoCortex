@@ -1,0 +1,25 @@
+{
+    "os": "macOS-10.16-x86_64-i386-64bit",
+    "python": "3.10.16",
+    "heartbeatAt": "2025-03-07T12:11:48.769007",
+    "startedAt": "2025-03-07T12:11:46.041162",
+    "docker": null,
+    "cpu_count": 8,
+    "cuda": null,
+    "args": [
+        "--name",
+        "06_03_25_driver_leftrightmnist"
+    ],
+    "state": "running",
+    "program": "/Users/patmccarthy/Documents/ThalamoCortex/train_scripts/train_driver_leftrightmnist.py",
+    "codePath": "train_scripts/train_driver_leftrightmnist.py",
+    "git": {
+        "remote": "https://github.com/pmccthy/ThalamoCortex",
+        "commit": "bde848263e37769119453a732c959f1bd75ceed3"
+    },
+    "email": "pat.mccarthy1@aol.com",
+    "root": "/Users/patmccarthy/Documents/ThalamoCortex",
+    "host": "Pats-MBP",
+    "username": "patmccarthy",
+    "executable": "/Users/patmccarthy/miniconda3/envs/thalamocortex/bin/python"
+}
