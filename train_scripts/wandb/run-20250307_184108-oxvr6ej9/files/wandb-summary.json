@@ -1,1 +1,1 @@
-{"train_loss": 2.263492727661133, "val_loss": 2.26243679864066, "top1_acc": 0.211, "top5_acc": 0.211, "_timestamp": 1741372989, "_runtime": 121, "_step": 3}
+{"train_loss": 1.319859721883138, "val_loss": 1.3521356752940588, "top1_acc": 0.7475, "top5_acc": 0.7475, "_timestamp": 1741373623, "_runtime": 755, "_step": 36}
