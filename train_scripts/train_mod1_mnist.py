@@ -12,8 +12,8 @@ import torch
 import pickle
 import wandb
 
-from models import CTCNet
-from utils import make_grid, create_data_loaders, train, evaluate
+from thalamocortex.models import CTCNet
+from thalamocortex.utils import make_grid, create_data_loaders, train, evaluate
 
 # Create a logger
 logger = logging.getLogger("MyLogger")
