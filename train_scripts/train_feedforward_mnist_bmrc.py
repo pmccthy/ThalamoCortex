@@ -38,7 +38,7 @@ class LoggerWriter:
 
 # Save paths
 data_save_path = "/users/costa/abz308/ThalamoCortex/thalamocortex/data"
-results_save_path = "/users/costa/abz308/ThalamoCortex/thalamocortex/results"
+results_save_path = "/well/costa/users/abz308"
 
 # hyperparameter grid for driver-type model
 hyperparam_grid = {
