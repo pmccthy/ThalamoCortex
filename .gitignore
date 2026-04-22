@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Environments
+.env
+.venv
+env/
+venv/
+
+# Weights & Biases
+wandb/
+
+# macOS
+.DS_Store
+
+# Model checkpoints and data files
+*.pt
+*.pth
+*.pkl
+*.h5

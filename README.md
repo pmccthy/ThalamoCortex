@@ -66,7 +66,7 @@ cd ThalamoCortex
 **2. Create and activate the Conda environment**
 
 ```bash
-conda env create -f burstccn_env.yml
+conda env create -f env.yml
 conda activate burstccn
 ```
 
@@ -122,24 +122,24 @@ ctx_logits, thal_logits = model(x)
 
 ```
 ThalamoCortex/
-├── thalamocortex/          # Core library
-│   ├── models.py           # CTCNet, CTCNetThalReadout, CortexWithThalamicMultiPreAct
-│   └── utils.py            # Data loaders, train/eval loops, W&B logging, grid search
-├── train_scripts/          # Training entry points
-│   ├── train_driver_*.py   # Scripts for additive / driver-type thalamus
-│   ├── train_mod*.py       # Scripts for multiplicative / modulator-type thalamus
-│   ├── train_feedforward*.py  # Purely feedforward baselines
-│   ├── train_ff_finetune.py   # Fine-tuning with thalamic readout
-│   ├── *.sh                # Shell scripts for batch training runs
-│   └── *.ipynb             # Training notebooks
-├── analysis/               # Analysis scripts and notebooks
+├── thalamocortex/              # Core library
+│   ├── models.py               # CTCNet, CTCNetThalReadout, CortexWithThalamicMultiPreAct
+│   └── utils.py                # Data loaders, train/eval loops, W&B logging, grid search
+├── scripts/                    # Python training and analysis scripts
+│   ├── train_driver*.py        # Scripts for additive / driver-type thalamus
+│   ├── train_mod*.py           # Scripts for multiplicative / modulator-type thalamus
+│   ├── train_feedforward*.py   # Purely feedforward baselines
+│   ├── train_ff_finetune.py    # Fine-tuning with thalamic readout
 │   ├── leftright_mnist_analysis.py
-│   └── *.ipynb
-├── data/                   # Dataset generation notebooks
+│   └── shell/                  # Batch shell scripts for cluster/grid runs
+│       └── *.sh
+├── notebooks/
+│   ├── training/               # Interactive training and prototyping notebooks
+│   └── analysis/               # Post-hoc analysis and interpretation notebooks
+├── data/                       # Dataset generation notebooks
 │   ├── generate_binarymnist.ipynb
 │   └── generate_leftrightmnist.ipynb
-├── env.yml                 # Conda environment (full pinned export)
-├── burstccn_env.yml        # Conda environment (recommended)
+├── env.yml                     # Conda environment
 ├── setup.py
 └── requirements.txt
 ```
@@ -148,19 +148,18 @@ ThalamoCortex/
 
 ## Training
 
-Training scripts are in `train_scripts/`. Each script exposes a grid-search over hyperparameters with optional W&B logging.
+Training scripts are in `scripts/`. Each script exposes a grid-search over hyperparameters with optional W&B logging.
 
 **Example — train a multiplicative pre-activation model on MNIST:**
 
 ```bash
-cd train_scripts
-python train_mod_mnist.py
+python scripts/train_mod1_mnist.py
 ```
 
 **Example — run a batch of experiments with a shell script:**
 
 ```bash
-bash train_scripts/training_mnist.sh
+bash scripts/shell/train_drivers_mods.sh
 ```
 
 Results and checkpoints are saved locally; to enable W&B logging, set your API key:
@@ -187,7 +186,7 @@ The following datasets are supported out of the box via the utilities in `thalam
 
 ## Analysis
 
-Notebooks and scripts for post-hoc analysis of trained models are in `analysis/`, including:
+Notebooks for post-hoc analysis of trained models are in `notebooks/analysis/`, with supporting scripts in `scripts/`. These include:
 
 - Representational analysis of thalamic and cortical activations
 - Fine-tuning experiments
@@ -206,7 +205,7 @@ Notebooks and scripts for post-hoc analysis of trained models are in `analysis/`
 - torchsummary
 - jupyter
 
-See `burstccn_env.yml` for the full pinned environment.
+See `env.yml` for the full pinned environment.
 
 ---
 
