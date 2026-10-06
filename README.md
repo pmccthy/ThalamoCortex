@@ -1,6 +1,6 @@
 # ThalamoCortex
 
-> PyTorch models of cortico-thalamo-cortical circuits for studying the computational role of higher-order thalamic projections in hierarchical sensory processing.
+Models of cortico-thalamo-cortical circuits for studying the computational role of higher-order thalamic projections in hierarchical sensory processing.
 
 ---
 
